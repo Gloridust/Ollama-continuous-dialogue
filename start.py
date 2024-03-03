@@ -1,7 +1,7 @@
 import ollama
 
 def get_response(message):
-    model_name = 'gemma:7b'
+    model_name = 'qwen:14b'
     response = ollama.chat(
         model=model_name, 
         messages=message,
