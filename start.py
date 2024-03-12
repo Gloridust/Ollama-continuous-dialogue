@@ -1,21 +1,25 @@
 import ollama
 
-def get_response(message):
+def get_response(message_history):
     model_name = 'qwen:7b'
-    response = ollama.chat(
-        model=model_name, 
-        messages=message,
-        stream=False,
-    )
-    output_text = response['message']['content']
-    received_message = response['message']
-    return output_text, received_message
+    try:
+        response = ollama.chat(model=model_name, messages=message_history, stream=False)
+        received_message = response['message']
+        return received_message['content'], received_message
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return "", {}
 
 message_history = []
 while True:
-    user_input_text = input("Input:")
-    message = {'role': 'user', 'content': user_input_text}
+    user_input = input("Input (or type 'exit' to quit):")
+    if user_input.lower() == 'exit':
+        break
+    message = {'role': 'user', 'content': user_input}
     message_history.append(message)
     output_text, received_message = get_response(message_history)
-    message_history.append(received_message)
-    print(output_text)
+    if output_text:
+        message_history.append(received_message)
+        print(output_text)
+    else:
+        print("Failed to get response.")
